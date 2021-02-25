@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 
 export default class Game extends Phaser.Scene
 {
-    private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 	constructor()
 	{
 		super('game')
@@ -10,10 +9,14 @@ export default class Game extends Phaser.Scene
 
 	preload()
     {
-        this.cursors = this.input.keyboard.createCursorKeys()
     }
 
     create()
     {
+        const map = this.make.tilemap({ key: 'ocean' })
+        const tileset = map.addTilesetImage('ocean_tiles', 'tiles')
+
+        map.createLayer('Ocean', tileset)
+        map.createLayer('Island', tileset)
     }
 }
