@@ -5,18 +5,15 @@ import Preloader from './scenes/Preloader'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	width: 2400,
-	height: 1800,
+	width: 640,
+	height: 640,
 	physics: {
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 0}
 		}
 	},
-	scene: [Preloader, Game],
-	scale: {
-		zoom: 0.5
-	}
+	scene: [Preloader, Game]
 }
 
 export default new Phaser.Game(config)
