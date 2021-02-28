@@ -8,6 +8,7 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
+    this.load.image('cursor', 'cursor.png')
     this.load.tilemapTiledJSON('ocean', 'tiles/ocean.json')
     this.load.image('tiles', 'tiles/ocean_tiles.png')
     this.load.spritesheet('ship', 'ships/ships.png', {
