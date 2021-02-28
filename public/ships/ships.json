@@ -4,20 +4,20 @@
       "frame": {
         "x": 0,
         "y": 0,
-        "w": 66,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 66,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "sourceSize": {
-        "w": 67,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "pivot": {
         "x": 0.5,
@@ -27,69 +27,21 @@
     "1.png": {
       "frame": {
         "x": 0,
-        "y": 114,
-        "w": 66,
-        "h": 114
+        "y": 64,
+        "w": 37,
+        "h": 64
       },
       "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 1,
-        "y": 0,
-        "w": 66,
-        "h": 114
-      },
-      "sourceSize": {
-        "w": 67,
-        "h": 114
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "4.png": {
-      "frame": {
-        "x": 0,
-        "y": 228,
-        "w": 66,
-        "h": 114
-      },
-      "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 66,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "sourceSize": {
-        "w": 67,
-        "h": 114
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "5.png": {
-      "frame": {
-        "x": 0,
-        "y": 342,
-        "w": 66,
-        "h": 114
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 1,
-        "y": 0,
-        "w": 66,
-        "h": 114
-      },
-      "sourceSize": {
-        "w": 67,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "pivot": {
         "x": 0.5,
@@ -99,21 +51,21 @@
     "2.png": {
       "frame": {
         "x": 0,
-        "y": 456,
-        "w": 66,
-        "h": 113
+        "y": 128,
+        "w": 37,
+        "h": 64
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
-        "y": 1,
-        "w": 66,
-        "h": 113
+        "y": 0,
+        "w": 37,
+        "h": 64
       },
       "sourceSize": {
-        "w": 67,
-        "h": 114
+        "w": 37,
+        "h": 64
       },
       "pivot": {
         "x": 0.5,
@@ -123,21 +75,69 @@
     "3.png": {
       "frame": {
         "x": 0,
-        "y": 569,
-        "w": 66,
-        "h": 113
+        "y": 192,
+        "w": 37,
+        "h": 64
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 1,
-        "y": 1,
-        "w": 66,
-        "h": 113
+        "x": 0,
+        "y": 0,
+        "w": 37,
+        "h": 64
       },
       "sourceSize": {
-        "w": 67,
-        "h": 114
+        "w": 37,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4.png": {
+      "frame": {
+        "x": 0,
+        "y": 256,
+        "w": 37,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 37,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 37,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5.png": {
+      "frame": {
+        "x": 0,
+        "y": 320,
+        "w": 37,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 37,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 37,
+        "h": 64
       },
       "pivot": {
         "x": 0.5,
@@ -148,11 +148,11 @@
   "meta": {
     "app": "http://free-tex-packer.com",
     "version": "0.6.6",
-    "image": "ships.png",
+    "image": "texture.png",
     "format": "RGBA8888",
     "size": {
-      "w": 66,
-      "h": 682
+      "w": 37,
+      "h": 384
     },
     "scale": 1
   }
