@@ -39,6 +39,7 @@ export class Cursor {
       }
       this.currRow -= 1
     }
+
     if (isRight && Map.tileToPixelValue(this.currRow + 1) < mapWidth) {
       this.cursorImg.setX(Map.getPixelCoords(this.currRow + 1))
       if (
@@ -49,6 +50,7 @@ export class Cursor {
       }
       this.currRow += 1
     }
+
     if (isDown && Map.tileToPixelValue(this.currCol + 1) < mapHeight) {
       this.cursorImg.setY(Map.getPixelCoords(this.currCol + 1))
       if (
@@ -59,14 +61,16 @@ export class Cursor {
       }
       this.currCol += 1
     }
+
     if (isUp && this.currCol > 0) {
       this.cursorImg.setY(Map.getPixelCoords(this.currCol - 1))
-      console.log(Map.tileToPixelValue(this.currCol))
       if (Map.tileToPixelValue(this.currCol) == this.gameScene.camera.worldView.top) {
         this.gameScene.camera.scrollY(-1)
       }
       this.currCol -= 1
     }
+
+    // Press Space to select
     if (isSpace) {
       const level = this.gameScene.level
       if (this.selectedShip && level.checkSpaceMoveable(this.currRow, this.currCol)) {
