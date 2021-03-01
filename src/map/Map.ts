@@ -10,4 +10,14 @@ export class Map {
     const scaledTileSize = Constants.TILE_SIZE * Constants.SCALE_FACTOR
     return scaledTileSize * gridValue + scaledTileSize / 2
   }
+
+  static getTileCoords(pixelValue: number) {
+    const scaledTileSize = Constants.TILE_SIZE * Constants.SCALE_FACTOR
+    return Math.floor(pixelValue / scaledTileSize)
+  }
+
+  static tileToPixelValue(tileValue: number) {
+    const scaledTileSize = Constants.TILE_SIZE * Constants.SCALE_FACTOR
+    return scaledTileSize * tileValue
+  }
 }

@@ -1,12 +1,42 @@
 import Phaser from 'phaser'
-import { Cursor } from '~/map/Cursor'
+import { Cursor } from '../map/Cursor'
 import { Level } from '../level/level'
-import { Ship } from './Ship'
+import { Ship, ShipConfig, ShipType } from '../level/Ship'
+import { Camera } from '../map/Camera'
+
+const PLAYER_SHIPS = [
+  {
+    shipType: ShipType.Pirate,
+    name: 'The Black Pearl',
+    defaultPosition: {
+      x: 0,
+      y: 0,
+    },
+  },
+  {
+    shipType: ShipType.Pirate,
+    name: "Queen Anne's Revenge",
+    defaultPosition: {
+      x: 1,
+      y: 0,
+    },
+  },
+  {
+    shipType: ShipType.Pirate,
+    name: 'Whydah Galley',
+    defaultPosition: {
+      x: 1,
+      y: 1,
+    },
+  },
+]
 
 export default class Game extends Phaser.Scene {
-  private level!: Level
-  private controls!: Phaser.Cameras.Controls.FixedKeyControl
-  private map!: Phaser.Tilemaps.Tilemap
+  public level!: Level
+  public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+  public mapCursor!: Cursor
+  public map!: Phaser.Tilemaps.Tilemap
+  public camera!: Camera
 
   constructor() {
     super('game')
@@ -14,15 +44,26 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.level = new Level(this)
+    this.cursors = this.input.keyboard.createCursorKeys()
   }
 
   create() {
     this.setupLevel()
-    const cursor = new Cursor(this, 0, 0)
-    const ship = new Ship(this, 0, 0)
+    this.camera = new Camera(this.cameras.main)
+    this.mapCursor = new Cursor(this, 0, 0)
+
+    // Add Player ships
+    const playerShips: Ship[] = PLAYER_SHIPS.map(
+      (config: ShipConfig) => new Ship(this, config)
+    )
+    this.level.addShips(playerShips)
   }
 
   setupLevel() {
     this.map = this.level.initMap()
+  }
+
+  update() {
+    this.mapCursor.update(this.cursors)
   }
 }

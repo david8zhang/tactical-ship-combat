@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-import { Constants } from '~/utils/Constants'
-import { Ship } from './Ship'
+import { Constants } from '../utils/Constants'
+import { Ship } from '../level/Ship'
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
