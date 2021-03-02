@@ -3,6 +3,10 @@ export class Constants {
     return 64
   }
 
+  public static get SCALED_TILE_SIZE() {
+    return Constants.SCALE_FACTOR * Constants.TILE_SIZE
+  }
+
   public static get SCALE_FACTOR() {
     return 0.5
   }
@@ -24,17 +28,11 @@ export class Constants {
   }
 
   public static get GAME_WINDOW_WIDTH_TILES() {
-    return (
-      Constants.GAME_WINDOW_WIDTH /
-      (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
-    )
+    return Constants.GAME_WINDOW_WIDTH / (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
   }
 
   public static get GAME_WINDOW_HEIGHT_TILES() {
-    return (
-      Constants.GAME_WINDOW_HEIGHT /
-      (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
-    )
+    return Constants.GAME_WINDOW_HEIGHT / (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
   }
 
   public static GET_TILE_TYPE(tileIndex: number) {
