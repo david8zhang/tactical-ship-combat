@@ -5,6 +5,7 @@ import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
 import { Map } from '../map/Map'
 import { Constants } from '../utils/Constants'
+import Menu from '../ui/Menu'
 
 const PLAYER_SHIPS = [
   {
@@ -39,6 +40,7 @@ export default class Game extends Phaser.Scene {
   public mapCursor!: Cursor
   public map!: Phaser.Tilemaps.Tilemap
   public camera!: Camera
+  public menu!: Menu
 
   constructor() {
     super('game')
@@ -63,6 +65,9 @@ export default class Game extends Phaser.Scene {
       backgroundColor: '#4287F580',
     })
     tile.setFixedSize(Constants.SCALED_TILE_SIZE, Constants.SCALED_TILE_SIZE)
+
+    // Add a menu
+    this.menu = new Menu(this)
   }
 
   setupLevel() {

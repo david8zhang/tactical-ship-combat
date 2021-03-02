@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { Plugin as NineSlicePlugin } from 'phaser3-nineslice'
 
 import Game from './scenes/Game'
 import Preloader from './scenes/Preloader'
@@ -12,6 +13,9 @@ const config: Phaser.Types.Core.GameConfig = {
     arcade: {
       gravity: { y: 0 },
     },
+  },
+  plugins: {
+    global: [NineSlicePlugin.DefaultCfg],
   },
   scene: [Preloader, Game],
 }
