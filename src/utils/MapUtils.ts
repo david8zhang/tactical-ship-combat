@@ -1,6 +1,6 @@
 import { Constants } from '~/utils/Constants'
 
-export class Map {
+export class MapUtils {
   /**
    * Get the pixel coordinate of a given tile coordinate
    * @param x x tile coordinate

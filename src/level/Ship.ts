@@ -1,5 +1,6 @@
-import { Constants } from '~/utils/Constants'
-import { Map } from '../map/Map'
+import { PathUtils } from '~/utils/PathUtils'
+import { Constants } from '../utils/Constants'
+import { MapUtils } from '../utils/MapUtils'
 
 export enum ShipType {
   'Red' = 0,
@@ -17,51 +18,60 @@ export interface ShipConfig {
     x: number
     y: number
   }
+  moveRange: number
 }
 
 export class Ship {
   public name: string
   public currX: number
   public currY: number
+  public moveRange: number
   private gameScene: Phaser.Scene
   private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
   constructor(scene: Phaser.Scene, shipConfig: ShipConfig) {
     this.name = shipConfig.name
-    this.sprite = scene.physics.add.sprite(
-      0,
-      0,
-      'ship',
-      shipConfig.shipType || 0
-    )
+    this.sprite = scene.physics.add.sprite(0, 0, 'ship', shipConfig.shipType || 0)
     this.gameScene = scene
     this.currX = shipConfig.defaultPosition.x
     this.currY = shipConfig.defaultPosition.y
+    this.moveRange = shipConfig.moveRange
     this.sprite.setDepth(2)
     this.sprite.scale = Constants.SCALE_FACTOR
     this.setPosition(shipConfig.defaultPosition.x, shipConfig.defaultPosition.y)
   }
 
   public setPosition(posX: number, posY: number) {
-    this.sprite.setX(Map.getPixelCoords(posX))
-    this.sprite.setY(Map.getPixelCoords(posY))
+    this.sprite.setX(MapUtils.getPixelCoords(posX))
+    this.sprite.setY(MapUtils.getPixelCoords(posY))
   }
 
-  public move(x: number, y: number) {
-    const xDiff =
-      (x - this.currX) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
-    const yDiff =
-      (y - this.currY) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
+  animatePath(path: any[] | undefined, index: number): void {
+    if (!path) {
+      return
+    }
+    if (index === path.length) {
+      return
+    }
+    const step = path[index]
+    const xDiff = (step.x - this.currX) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
+    const yDiff = (step.y - this.currY) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
     this.gameScene.tweens.add({
       targets: this.sprite,
-      duration: 350,
+      duration: 75,
       x: `+=${xDiff}`,
       y: `+=${yDiff}`,
       onComplete: () => {
-        this.sprite.setX(Map.getPixelCoords(x))
-        this.sprite.setY(Map.getPixelCoords(y))
-        this.currX = x
-        this.currY = y
+        this.sprite.setX(MapUtils.getPixelCoords(step.x))
+        this.sprite.setY(MapUtils.getPixelCoords(step.y))
+        this.currX = step.x
+        this.currY = step.y
+        this.animatePath(path, index + 1)
       },
     })
+  }
+
+  public move(x: number, y: number) {
+    const path = PathUtils.findShortestPath({ x: this.currX, y: this.currY }, { x, y })
+    this.animatePath(path, 0)
   }
 }

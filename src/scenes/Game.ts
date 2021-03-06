@@ -3,7 +3,7 @@ import { Cursor } from '../map/Cursor'
 import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
-import { Map } from '../map/Map'
+import { MapUtils } from '../utils/MapUtils'
 import { Constants } from '../utils/Constants'
 import Menu from '../ui/Menu'
 
@@ -15,6 +15,7 @@ const PLAYER_SHIPS = [
       x: 0,
       y: 0,
     },
+    moveRange: 4,
   },
   {
     shipType: ShipType.Pirate,
@@ -23,6 +24,7 @@ const PLAYER_SHIPS = [
       x: 1,
       y: 0,
     },
+    moveRange: 4,
   },
   {
     shipType: ShipType.Pirate,
@@ -31,6 +33,7 @@ const PLAYER_SHIPS = [
       x: 1,
       y: 1,
     },
+    moveRange: 4,
   },
 ]
 
@@ -59,15 +62,6 @@ export default class Game extends Phaser.Scene {
     // Add Player ships
     const playerShips: Ship[] = PLAYER_SHIPS.map((config: ShipConfig) => new Ship(this, config))
     this.level.addShips(playerShips)
-
-    // Add a highlight tile
-    let tile = this.add.text(Map.tileToPixelValue(10), Map.tileToPixelValue(10), '', {
-      backgroundColor: '#4287F580',
-    })
-    tile.setFixedSize(Constants.SCALED_TILE_SIZE, Constants.SCALED_TILE_SIZE)
-
-    // Add a menu
-    this.menu = new Menu(this)
   }
 
   setupLevel() {

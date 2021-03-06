@@ -1,4 +1,4 @@
-import { Map } from './Map'
+import { MapUtils } from '../utils/MapUtils'
 import { Constants } from '../utils/Constants'
 
 export class Camera {
@@ -15,7 +15,7 @@ export class Camera {
    * @return {none}
    */
   scrollX(tile: number) {
-    this.camera.scrollX = this.camera.scrollX + Map.tileToPixelValue(tile)
+    this.camera.scrollX = this.camera.scrollX + MapUtils.tileToPixelValue(tile)
   }
 
   /**
@@ -24,7 +24,7 @@ export class Camera {
    * @return {none}
    */
   scrollY(tile: number) {
-    this.camera.scrollY = this.camera.scrollY + Map.tileToPixelValue(tile)
+    this.camera.scrollY = this.camera.scrollY + MapUtils.tileToPixelValue(tile)
   }
 
   /**

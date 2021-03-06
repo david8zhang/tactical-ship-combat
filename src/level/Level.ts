@@ -1,10 +1,13 @@
+import { MapUtils } from '../utils/MapUtils'
 import { Constants } from '../utils/Constants'
+import { PathUtils } from '../utils/PathUtils'
 import { Ship } from './Ship'
 
 export class Level {
   private mapObject: number[][]
   private ships: (Ship | null)[][]
   private scene: Phaser.Scene
+  private highlightedTiles: Phaser.GameObjects.Text[] = []
 
   constructor(scene: Phaser.Scene) {
     this.mapObject = []
@@ -63,10 +66,40 @@ export class Level {
     this.ships[y][x] = ship
   }
 
-  checkSpaceMoveable(x: number, y: number) {
+  checkSpaceMoveable(x: number, y: number, ship: Ship) {
+    const moveableSquares = PathUtils.getSquaresInRange(ship.moveRange, ship.currX, ship.currY)
+    const squareInMoveable =
+      moveableSquares.find((square) => square[0] == x && square[1] == y) !== undefined
     return (
+      squareInMoveable &&
       !this.isShipAtPosition(x, y) &&
       Constants.GET_TILE_TYPE(this.mapObject[y][x]) == 'Ocean'
     )
+  }
+
+  highlightMoveableSquares(start: { x: number; y: number }, moveRange: number) {
+    const moveableSquares = PathUtils.getSquaresInRange(moveRange, start.x, start.y)
+    moveableSquares.forEach((square) => {
+      this.highlightTile(square[0], square[1])
+    })
+  }
+
+  turnOffAllHighlights() {
+    this.highlightedTiles.forEach((obj) => {
+      obj.destroy()
+    })
+  }
+
+  highlightTile(x: number, y: number) {
+    let textTile = this.scene.add.text(
+      MapUtils.tileToPixelValue(x),
+      MapUtils.tileToPixelValue(y),
+      '',
+      {
+        backgroundColor: '#4287F580',
+      }
+    )
+    textTile.setFixedSize(Constants.SCALED_TILE_SIZE, Constants.SCALED_TILE_SIZE)
+    this.highlightedTiles.push(textTile)
   }
 }
