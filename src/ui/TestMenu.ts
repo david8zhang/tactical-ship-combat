@@ -1,4 +1,4 @@
-export default class Menu {
+export default class TestMenu {
   private container!: Phaser.GameObjects.Container
   private panelWidth: number = 400
   private panelHeight: number = 150

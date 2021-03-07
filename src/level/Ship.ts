@@ -1,3 +1,4 @@
+import Game from '../scenes/Game'
 import { PathUtils } from '~/utils/PathUtils'
 import { Constants } from '../utils/Constants'
 import { MapUtils } from '../utils/MapUtils'
@@ -26,9 +27,9 @@ export class Ship {
   public currX: number
   public currY: number
   public moveRange: number
-  private gameScene: Phaser.Scene
+  private gameScene: Game
   private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-  constructor(scene: Phaser.Scene, shipConfig: ShipConfig) {
+  constructor(scene: Game, shipConfig: ShipConfig) {
     this.name = shipConfig.name
     this.sprite = scene.physics.add.sprite(0, 0, 'ship', shipConfig.shipType || 0)
     this.gameScene = scene
@@ -71,7 +72,11 @@ export class Ship {
   }
 
   public move(x: number, y: number) {
-    const path = PathUtils.findShortestPath({ x: this.currX, y: this.currY }, { x, y })
+    const path = PathUtils.findShortestPath(
+      { x: this.currX, y: this.currY },
+      { x, y },
+      this.gameScene.level
+    )
     this.animatePath(path, 0)
   }
 }

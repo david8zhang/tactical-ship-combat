@@ -1,3 +1,4 @@
+import { Level } from '../level/level'
 import { Constants } from './Constants'
 import { PriorityQueue } from './PriorityQueue'
 
@@ -24,7 +25,7 @@ export class PathUtils {
         squaresInRange.push(coord)
         directions.forEach((dir) => {
           const newCoords = [coord[0] + dir[0], coord[1] + dir[1]]
-          if (this.isWithinRange(newCoords) && !seen.has(`${newCoords[0]},${newCoords[1]}`)) {
+          if (!seen.has(`${newCoords[0]},${newCoords[1]}`)) {
             seen.add(`${newCoords[0]},${newCoords[1]}`)
             queue.push(newCoords)
           }
@@ -35,15 +36,6 @@ export class PathUtils {
     return squaresInRange
   }
 
-  static isWithinRange(newCoords: number[]) {
-    return (
-      newCoords[0] >= 0 &&
-      newCoords[0] < Constants.GAME_WINDOW_HEIGHT_TILES &&
-      newCoords[1] >= 0 &&
-      newCoords[1] < Constants.GAME_WINDOW_WIDTH_TILES
-    )
-  }
-
   /**
    * find shortest path between 2 point using Best First Search
    * @param  {array} map
@@ -51,7 +43,11 @@ export class PathUtils {
    * @param  {object} end
    * @return {array} travel path
    */
-  static findShortestPath(start: { x: number; y: number }, end: { x: number; y: number }) {
+  static findShortestPath(
+    start: { x: number; y: number },
+    end: { x: number; y: number },
+    level: Level
+  ) {
     var queue = new PriorityQueue()
     queue.enqueue(
       {
@@ -90,7 +86,11 @@ export class PathUtils {
           return this.traceback(newPos)
         }
         // if current position is movable
-        if (!visited.has(`${newPos.y},${newPos.x}`)) {
+        if (
+          !visited.has(`${newPos.y},${newPos.x}`) &&
+          level.isTileInBounds(newPos.x, newPos.y) &&
+          !level.isObjectAtSpace(newPos.x, newPos.y)
+        ) {
           // and haven't visited
           // Calculate distance to goal
           let d = Math.sqrt(Math.pow(end.x - newPos.x, 2) + Math.pow(end.y - newPos.y, 2))

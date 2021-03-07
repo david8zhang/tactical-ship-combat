@@ -3,9 +3,7 @@ import { Cursor } from '../map/Cursor'
 import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
-import { MapUtils } from '../utils/MapUtils'
-import { Constants } from '../utils/Constants'
-import Menu from '../ui/Menu'
+import Menu from '../ui/TestMenu'
 
 const PLAYER_SHIPS = [
   {
@@ -15,7 +13,7 @@ const PLAYER_SHIPS = [
       x: 0,
       y: 0,
     },
-    moveRange: 4,
+    moveRange: 10,
   },
   {
     shipType: ShipType.Pirate,
@@ -24,7 +22,7 @@ const PLAYER_SHIPS = [
       x: 1,
       y: 0,
     },
-    moveRange: 4,
+    moveRange: 10,
   },
   {
     shipType: ShipType.Pirate,
@@ -33,7 +31,7 @@ const PLAYER_SHIPS = [
       x: 1,
       y: 1,
     },
-    moveRange: 4,
+    moveRange: 10,
   },
 ]
 

@@ -76,7 +76,7 @@ export class Cursor {
 
       // If there is already a selected ship
       if (this.selectedShip) {
-        if (level.checkSpaceMoveable(this.currRow, this.currCol, this.selectedShip)) {
+        if (level.checkSpaceMoveable(this.currRow, this.currCol)) {
           level.moveShip(this.selectedShip, this.currRow, this.currCol)
           this.gameScene.level.turnOffAllHighlights()
           this.selectedShip = null
@@ -85,10 +85,7 @@ export class Cursor {
         const ship = level.getShipAtPosition(this.currRow, this.currCol)
         if (ship) {
           this.selectedShip = ship
-          this.gameScene.level.highlightMoveableSquares(
-            { x: this.currRow, y: this.currCol },
-            ship.moveRange
-          )
+          this.gameScene.level.highlightMoveableSquares({ x: this.currRow, y: this.currCol }, ship)
         }
       }
     }

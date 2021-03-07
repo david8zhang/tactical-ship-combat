@@ -1,3 +1,5 @@
+import { MapUtils } from './MapUtils'
+
 export class Constants {
   public static get TILE_SIZE() {
     return 64
@@ -33,6 +35,18 @@ export class Constants {
 
   public static get GAME_WINDOW_HEIGHT_TILES() {
     return Constants.GAME_WINDOW_HEIGHT / (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
+  }
+
+  public static get CONTEXT_MENU_WIDTH() {
+    return MapUtils.tileToPixelValue(3)
+  }
+
+  public static get CONTEXT_MENU_HEIGHT() {
+    return MapUtils.tileToPixelValue(1)
+  }
+
+  public static get CONTEXT_MENU_OFFSET_X() {
+    return MapUtils.tileToPixelValue(1)
   }
 
   public static GET_TILE_TYPE(tileIndex: number) {
