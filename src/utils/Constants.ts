@@ -37,15 +37,15 @@ export class Constants {
     return Constants.GAME_WINDOW_HEIGHT / (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
   }
 
-  public static get CONTEXT_MENU_WIDTH() {
+  public static get ACTION_MENU_WIDTH() {
     return MapUtils.tileToPixelValue(3)
   }
 
-  public static get CONTEXT_MENU_HEIGHT() {
+  public static get ACTION_MENU_HEIGHT() {
     return MapUtils.tileToPixelValue(1)
   }
 
-  public static get CONTEXT_MENU_OFFSET_X() {
+  public static get ACTION_MENU_OFFSET_X() {
     return MapUtils.tileToPixelValue(1)
   }
 

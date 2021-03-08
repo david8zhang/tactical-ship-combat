@@ -4,6 +4,7 @@ import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
 import Menu from '../ui/TestMenu'
+import { ActionMenu, ActionMenuItem } from '../ui/ActionMenu'
 
 const PLAYER_SHIPS = [
   {
@@ -60,6 +61,9 @@ export default class Game extends Phaser.Scene {
     // Add Player ships
     const playerShips: Ship[] = PLAYER_SHIPS.map((config: ShipConfig) => new Ship(this, config))
     this.level.addShips(playerShips)
+
+    const actionMenu = new ActionMenu(this)
+    actionMenu.createMenu({ x: 0, y: 0 })
   }
 
   setupLevel() {
