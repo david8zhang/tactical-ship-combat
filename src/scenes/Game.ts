@@ -3,8 +3,7 @@ import { Cursor } from '../map/Cursor'
 import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
-import Menu from '../ui/TestMenu'
-import { ActionMenu, ActionMenuItem } from '../ui/ActionMenu'
+import { ActionMenu } from '../ui/ActionMenu'
 
 const PLAYER_SHIPS = [
   {
@@ -42,7 +41,7 @@ export default class Game extends Phaser.Scene {
   public mapCursor!: Cursor
   public map!: Phaser.Tilemaps.Tilemap
   public camera!: Camera
-  public menu!: Menu
+  public actionMenu!: ActionMenu
 
   constructor() {
     super('game')
@@ -62,8 +61,10 @@ export default class Game extends Phaser.Scene {
     const playerShips: Ship[] = PLAYER_SHIPS.map((config: ShipConfig) => new Ship(this, config))
     this.level.addShips(playerShips)
 
-    const actionMenu = new ActionMenu(this)
-    actionMenu.createMenu({ x: 0, y: 0 })
+    // Create an action menu
+    this.actionMenu = new ActionMenu(this)
+    this.actionMenu.positionMenu({ x: 0, y: 0 })
+    this.actionMenu.enable()
   }
 
   setupLevel() {
@@ -71,6 +72,10 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
-    this.mapCursor.update(this.cursors)
+    if (!this.actionMenu.isEnabled) {
+      this.mapCursor.update(this.cursors)
+    } else {
+      this.actionMenu.update(this.cursors)
+    }
   }
 }
