@@ -8,7 +8,7 @@ export class Cursor {
   private cursorImg!: Phaser.GameObjects.Image
   private currRow: number
   private currCol: number
-  private selectedShip: Ship | null = null
+  public selectedShip: Ship | null = null
 
   constructor(gameScene: Game, x: number, y: number) {
     this.gameScene = gameScene
@@ -77,17 +77,38 @@ export class Cursor {
       // If there is already a selected ship
       if (this.selectedShip) {
         if (level.checkSpaceMoveable(this.currRow, this.currCol)) {
-          level.moveShip(this.selectedShip, this.currRow, this.currCol)
-          this.gameScene.level.turnOffAllHighlights()
-          this.selectedShip = null
+          level.moveShip(this.selectedShip, this.currRow, this.currCol, () => {
+            this.gameScene.level.turnOffAllHighlights()
+
+            // Enable the action menu
+            this.gameScene.actionMenu.enable({
+              x: this.selectedShip!.currX,
+              y: this.selectedShip!.currY,
+            })
+          })
         }
       } else {
         const ship = level.getShipAtPosition(this.currRow, this.currCol)
-        if (ship) {
+        if (ship && !ship.hasMoved) {
           this.selectedShip = ship
           this.gameScene.level.highlightMoveableSquares({ x: this.currRow, y: this.currCol }, ship)
         }
       }
+    }
+  }
+
+  choosePostMoveAction(option) {
+    // Process the different options that are available to player after moving
+    this.selectedShip!.setHasMoved(true)
+    this.selectedShip = null
+    this.gameScene.actionMenu.disable()
+
+    // If all ships have moved, progress to enemy turn
+    console.log(this.gameScene.level.haveAllShipsMoved())
+    if (this.gameScene.level.haveAllShipsMoved()) {
+      this.gameScene.ai.moveEnemies(() => {
+        this.gameScene.level.resetShipMoveStates()
+      })
     }
   }
 

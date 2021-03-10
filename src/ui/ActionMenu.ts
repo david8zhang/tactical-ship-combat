@@ -1,3 +1,4 @@
+import Game from '../scenes/Game'
 import { MapUtils } from '~/utils/MapUtils'
 import { Constants } from '../utils/Constants'
 
@@ -34,7 +35,7 @@ export class ActionMenuItem {
 }
 
 export class ActionMenu {
-  private scene: Phaser.Scene
+  private scene: Game
   private actionList: ActionMenuItem[] = []
   public isEnabled: boolean = false
   public selectedMenuItemIndex: number = 0
@@ -42,7 +43,7 @@ export class ActionMenu {
 
   private cursor: Phaser.GameObjects.Graphics | null
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Game) {
     this.scene = scene
     this.actionList = [
       new ActionMenuItem(scene, 'Attack'),
@@ -90,8 +91,9 @@ export class ActionMenu {
     this.cursor?.setVisible(false)
   }
 
-  enable() {
+  enable(position: { x: number; y: number }) {
     this.isEnabled = true
+    this.positionMenu(position)
     this.actionList.forEach((item: ActionMenuItem) => {
       item.setVisible(true)
     })
@@ -109,25 +111,23 @@ export class ActionMenu {
     )
   }
 
-  getSelectedMenuItem(): ActionMenuItem {
-    return this.actionList[this.selectedMenuItemIndex]
+  processSelectedMenuItem(): void {
+    const selectedMenuItem: ActionMenuItem = this.actionList[this.selectedMenuItemIndex]
+    this.scene.mapCursor.choosePostMoveAction(selectedMenuItem)
   }
 
   update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
     const isDown = Phaser.Input.Keyboard.JustDown(cursors.down)
     const isUp = Phaser.Input.Keyboard.JustDown(cursors.up)
-    const keys = this.scene.input.keyboard.addKeys({
-      enter: Phaser.Input.Keyboard.KeyCodes.ENTER,
-    })
-    const isEnter = Phaser.Input.Keyboard.JustDown(keys['enter'])
+    const isSpace = Phaser.Input.Keyboard.JustDown(cursors.space)
     if (isDown) {
       this.moveMenuIndex(1)
     }
     if (isUp) {
       this.moveMenuIndex(-1)
     }
-    if (isEnter) {
-      console.log(this.getSelectedMenuItem())
+    if (isSpace) {
+      this.processSelectedMenuItem()
     }
   }
 }

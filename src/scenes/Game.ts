@@ -4,6 +4,7 @@ import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
 import { ActionMenu } from '../ui/ActionMenu'
+import { AI } from '../level/AI'
 
 const PLAYER_SHIPS = [
   {
@@ -42,6 +43,7 @@ export default class Game extends Phaser.Scene {
   public map!: Phaser.Tilemaps.Tilemap
   public camera!: Camera
   public actionMenu!: ActionMenu
+  public ai!: AI
 
   constructor() {
     super('game')
@@ -64,7 +66,9 @@ export default class Game extends Phaser.Scene {
     // Create an action menu
     this.actionMenu = new ActionMenu(this)
     this.actionMenu.positionMenu({ x: 0, y: 0 })
-    this.actionMenu.enable()
+
+    // Initialize an AI that controls all the enemy ships
+    this.ai = new AI()
   }
 
   setupLevel() {

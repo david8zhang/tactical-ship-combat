@@ -27,8 +27,10 @@ export class Ship {
   public currX: number
   public currY: number
   public moveRange: number
+  public hasMoved: boolean
   private gameScene: Game
   private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+
   constructor(scene: Game, shipConfig: ShipConfig) {
     this.name = shipConfig.name
     this.sprite = scene.physics.add.sprite(0, 0, 'ship', shipConfig.shipType || 0)
@@ -39,6 +41,7 @@ export class Ship {
     this.sprite.setDepth(2)
     this.sprite.scale = Constants.SCALE_FACTOR
     this.setPosition(shipConfig.defaultPosition.x, shipConfig.defaultPosition.y)
+    this.hasMoved = false
   }
 
   public setPosition(posX: number, posY: number) {
@@ -46,11 +49,24 @@ export class Ship {
     this.sprite.setY(MapUtils.getPixelCoords(posY))
   }
 
-  animatePath(path: any[] | undefined, index: number): void {
+  public setHasMoved(hasMoved: boolean) {
+    // If has moved, grey out the ship
+    if (hasMoved) {
+      this.sprite.setTint(0x000000)
+      this.sprite.setAlpha(0.5)
+    } else {
+      this.sprite.setTint(0xffffff)
+      this.sprite.setAlpha(1)
+    }
+    this.hasMoved = hasMoved
+  }
+
+  animatePath(path: any[] | undefined, index: number, cb: Function): void {
     if (!path) {
       return
     }
     if (index === path.length) {
+      cb()
       return
     }
     const step = path[index]
@@ -66,17 +82,17 @@ export class Ship {
         this.sprite.setY(MapUtils.getPixelCoords(step.y))
         this.currX = step.x
         this.currY = step.y
-        this.animatePath(path, index + 1)
+        this.animatePath(path, index + 1, cb)
       },
     })
   }
 
-  public move(x: number, y: number) {
+  public move(x: number, y: number, cb: Function) {
     const path = PathUtils.findShortestPath(
       { x: this.currX, y: this.currY },
       { x, y },
       this.gameScene.level
     )
-    this.animatePath(path, 0)
+    this.animatePath(path, 0, cb)
   }
 }

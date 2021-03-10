@@ -6,13 +6,13 @@ import Game from '../scenes/Game'
 export class Level {
   private mapObject: number[][]
   private map!: Phaser.Tilemaps.Tilemap
-  private ships: (Ship | null)[][]
+  private shipPositions: (Ship | null)[][]
   private scene: Game
   private highlightedSquares: string[] = []
 
   constructor(scene: Game) {
     this.mapObject = []
-    this.ships = []
+    this.shipPositions = []
     this.scene = scene
   }
 
@@ -38,37 +38,37 @@ export class Level {
   initializeObjectMaps(tiles: Phaser.Tilemaps.Tile[][]) {
     for (let i = 0; i < tiles.length; i++) {
       if (!this.mapObject[i]) this.mapObject[i] = new Array(tiles[0].length)
-      if (!this.ships[i]) this.ships[i] = new Array(tiles[0].length)
+      if (!this.shipPositions[i]) this.shipPositions[i] = new Array(tiles[0].length)
 
       for (let j = 0; j < tiles[0].length; j++) {
         if (tiles[i][j].index !== -1) {
           this.mapObject[i][j] = tiles[i][j].index
         }
-        this.ships[i][j] = null
+        this.shipPositions[i][j] = null
       }
     }
   }
 
   addShips(ships: Ship[]) {
     ships.forEach((ship: Ship) => {
-      this.ships[ship.currY][ship.currX] = ship
+      this.shipPositions[ship.currY][ship.currX] = ship
     })
   }
 
   getShipAtPosition(x: number, y: number): Ship | null {
-    return this.ships[y][x]
+    return this.shipPositions[y][x]
   }
 
   isShipAtPosition(x: number, y: number): boolean {
-    return this.ships[y][x] !== null
+    return this.shipPositions[y][x] !== null
   }
 
-  moveShip(ship: Ship, x: number, y: number) {
+  moveShip(ship: Ship, x: number, y: number, cb: Function) {
     const oldX = ship.currX
     const oldY = ship.currY
-    this.ships[oldY][oldX] = null
-    ship.move(x, y)
-    this.ships[y][x] = ship
+    this.shipPositions[oldY][oldX] = null
+    ship.move(x, y, cb)
+    this.shipPositions[y][x] = ship
   }
 
   checkSpaceMoveable(x: number, y: number) {
@@ -116,5 +116,29 @@ export class Level {
       tile.tint = 0xffffff
       tile.setAlpha(0.8)
     }
+  }
+
+  haveAllShipsMoved() {
+    for (let i = 0; i < this.shipPositions.length; i++) {
+      for (let j = 0; j < this.shipPositions[0].length; j++) {
+        const ship: Ship = this.shipPositions[i][j] as Ship
+        if (ship && !ship.hasMoved) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  resetShipMoveStates() {
+    for (let i = 0; i < this.shipPositions.length; i++) {
+      for (let j = 0; j < this.shipPositions[0].length; j++) {
+        const ship: Ship = this.shipPositions[i][j] as Ship
+        if (ship) {
+          ship.setHasMoved(false)
+        }
+      }
+    }
+    return true
   }
 }
