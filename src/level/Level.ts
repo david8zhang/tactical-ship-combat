@@ -6,13 +6,16 @@ import Game from '../scenes/Game'
 export class Level {
   private mapObject: number[][]
   private map!: Phaser.Tilemaps.Tilemap
-  private shipPositions: (Ship | null)[][]
   private scene: Game
   private highlightedSquares: string[] = []
 
+  public playerShips: (Ship | null)[][]
+  public enemyShips: (Ship | null)[][]
+
   constructor(scene: Game) {
     this.mapObject = []
-    this.shipPositions = []
+    this.playerShips = []
+    this.enemyShips = []
     this.scene = scene
   }
 
@@ -38,37 +41,51 @@ export class Level {
   initializeObjectMaps(tiles: Phaser.Tilemaps.Tile[][]) {
     for (let i = 0; i < tiles.length; i++) {
       if (!this.mapObject[i]) this.mapObject[i] = new Array(tiles[0].length)
-      if (!this.shipPositions[i]) this.shipPositions[i] = new Array(tiles[0].length)
+      if (!this.playerShips[i]) this.playerShips[i] = new Array(tiles[0].length)
+      if (!this.enemyShips[i]) this.enemyShips[i] = new Array(tiles[0].length)
 
       for (let j = 0; j < tiles[0].length; j++) {
         if (tiles[i][j].index !== -1) {
           this.mapObject[i][j] = tiles[i][j].index
         }
-        this.shipPositions[i][j] = null
+        this.playerShips[i][j] = null
+        this.enemyShips[i][j] = null
       }
     }
   }
 
-  addShips(ships: Ship[]) {
+  addEnemyShips(ships: Ship[]) {
     ships.forEach((ship: Ship) => {
-      this.shipPositions[ship.currY][ship.currX] = ship
+      this.enemyShips[ship.currY][ship.currX] = ship
+    })
+  }
+
+  addPlayerShips(ships: Ship[]) {
+    ships.forEach((ship: Ship) => {
+      this.playerShips[ship.currY][ship.currX] = ship
     })
   }
 
   getShipAtPosition(x: number, y: number): Ship | null {
-    return this.shipPositions[y][x]
+    return this.playerShips[y][x]
   }
 
   isShipAtPosition(x: number, y: number): boolean {
-    return this.shipPositions[y][x] !== null
+    return this.playerShips[y][x] !== null
   }
 
-  moveShip(ship: Ship, x: number, y: number, cb: Function) {
+  moveShip(
+    ship: Ship,
+    newPos: { x: number; y: number },
+    shipPositions: (Ship | null)[][],
+    cb: Function
+  ) {
+    const { x, y } = newPos
     const oldX = ship.currX
     const oldY = ship.currY
-    this.shipPositions[oldY][oldX] = null
+    shipPositions[oldY][oldX] = null
     ship.move(x, y, cb)
-    this.shipPositions[y][x] = ship
+    shipPositions[y][x] = ship
   }
 
   checkSpaceMoveable(x: number, y: number) {
@@ -79,8 +96,8 @@ export class Level {
     return this.isShipAtPosition(x, y) || Constants.GET_TILE_TYPE(this.mapObject[y][x]) != 'Ocean'
   }
 
-  highlightMoveableSquares(start: { x: number; y: number }, ship: Ship) {
-    const moveableSquares = PathUtils.getSquaresInRange(ship.moveRange, start.x, start.y)
+  highlightMoveableSquares(ship: Ship) {
+    const moveableSquares = PathUtils.getSquaresInRange(ship.moveRange, ship.currX, ship.currY)
       .filter((square) => {
         const [x, y] = square
         return this.isTileInBounds(x, y)
@@ -118,10 +135,10 @@ export class Level {
     }
   }
 
-  haveAllShipsMoved() {
-    for (let i = 0; i < this.shipPositions.length; i++) {
-      for (let j = 0; j < this.shipPositions[0].length; j++) {
-        const ship: Ship = this.shipPositions[i][j] as Ship
+  haveAllShipsMoved(ships: (Ship | null)[][]) {
+    for (let i = 0; i < ships.length; i++) {
+      for (let j = 0; j < ships[0].length; j++) {
+        const ship: Ship = ships[i][j] as Ship
         if (ship && !ship.hasMoved) {
           return false
         }
@@ -130,15 +147,28 @@ export class Level {
     return true
   }
 
-  resetShipMoveStates() {
-    for (let i = 0; i < this.shipPositions.length; i++) {
-      for (let j = 0; j < this.shipPositions[0].length; j++) {
-        const ship: Ship = this.shipPositions[i][j] as Ship
+  resetShipMoveStates(ships: (Ship | null)[][]) {
+    for (let i = 0; i < ships.length; i++) {
+      for (let j = 0; j < ships[0].length; j++) {
+        const ship: Ship = ships[i][j] as Ship
         if (ship) {
           ship.setHasMoved(false)
         }
       }
     }
     return true
+  }
+
+  getShipsAsList(ships: (Ship | null)[][]) {
+    const shipList: Ship[] = []
+    for (let i = 0; i < ships.length; i++) {
+      for (let j = 0; j < ships[0].length; j++) {
+        const ship: Ship = ships[i][j] as Ship
+        if (ship) {
+          shipList.push(ship)
+        }
+      }
+    }
+    return shipList
   }
 }

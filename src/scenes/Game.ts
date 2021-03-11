@@ -36,6 +36,36 @@ const PLAYER_SHIPS = [
   },
 ]
 
+const ENEMY_SHIPS = [
+  {
+    shipType: ShipType.Red,
+    name: 'HMS Nemesis',
+    defaultPosition: {
+      x: 19,
+      y: 19,
+    },
+    moveRange: 10,
+  },
+  {
+    shipType: ShipType.Red,
+    name: 'The Dragon',
+    defaultPosition: {
+      x: 18,
+      y: 19,
+    },
+    moveRange: 10,
+  },
+  {
+    shipType: ShipType.Red,
+    name: 'HMS Salisbury',
+    defaultPosition: {
+      x: 19,
+      y: 18,
+    },
+    moveRange: 10,
+  },
+]
+
 export default class Game extends Phaser.Scene {
   public level!: Level
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -52,6 +82,7 @@ export default class Game extends Phaser.Scene {
   preload() {
     this.level = new Level(this)
     this.cursors = this.input.keyboard.createCursorKeys()
+    this.ai = new AI(this, { enemyShips: ENEMY_SHIPS })
   }
 
   create() {
@@ -61,14 +92,13 @@ export default class Game extends Phaser.Scene {
 
     // Add Player ships
     const playerShips: Ship[] = PLAYER_SHIPS.map((config: ShipConfig) => new Ship(this, config))
-    this.level.addShips(playerShips)
+    const enemyShips: Ship[] = ENEMY_SHIPS.map((config: ShipConfig) => new Ship(this, config))
+    this.level.addPlayerShips(playerShips)
+    this.level.addEnemyShips(enemyShips)
 
     // Create an action menu
     this.actionMenu = new ActionMenu(this)
     this.actionMenu.positionMenu({ x: 0, y: 0 })
-
-    // Initialize an AI that controls all the enemy ships
-    this.ai = new AI()
   }
 
   setupLevel() {

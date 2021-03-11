@@ -77,7 +77,8 @@ export class Cursor {
       // If there is already a selected ship
       if (this.selectedShip) {
         if (level.checkSpaceMoveable(this.currRow, this.currCol)) {
-          level.moveShip(this.selectedShip, this.currRow, this.currCol, () => {
+          const newPos = { x: this.currRow, y: this.currCol }
+          level.moveShip(this.selectedShip, newPos, this.gameScene.level.playerShips, () => {
             this.gameScene.level.turnOffAllHighlights()
 
             // Enable the action menu
@@ -91,7 +92,7 @@ export class Cursor {
         const ship = level.getShipAtPosition(this.currRow, this.currCol)
         if (ship && !ship.hasMoved) {
           this.selectedShip = ship
-          this.gameScene.level.highlightMoveableSquares({ x: this.currRow, y: this.currCol }, ship)
+          this.gameScene.level.highlightMoveableSquares(ship)
         }
       }
     }
@@ -104,10 +105,13 @@ export class Cursor {
     this.gameScene.actionMenu.disable()
 
     // If all ships have moved, progress to enemy turn
-    console.log(this.gameScene.level.haveAllShipsMoved())
-    if (this.gameScene.level.haveAllShipsMoved()) {
-      this.gameScene.ai.moveEnemies(() => {
-        this.gameScene.level.resetShipMoveStates()
+    const { level, ai } = this.gameScene
+    const playerShips = level.playerShips
+    const enemyShips = level.enemyShips
+    if (level.haveAllShipsMoved(playerShips)) {
+      ai.moveEnemies(() => {
+        level.resetShipMoveStates(playerShips)
+        level.resetShipMoveStates(enemyShips)
       })
     }
   }
