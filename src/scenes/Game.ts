@@ -8,6 +8,7 @@ import { AI } from '../level/AI'
 
 const PLAYER_SHIPS = [
   {
+    side: 'Player',
     shipType: ShipType.Pirate,
     name: 'The Black Pearl',
     defaultPosition: {
@@ -17,6 +18,7 @@ const PLAYER_SHIPS = [
     moveRange: 10,
   },
   {
+    side: 'Player',
     shipType: ShipType.Pirate,
     name: "Queen Anne's Revenge",
     defaultPosition: {
@@ -26,6 +28,7 @@ const PLAYER_SHIPS = [
     moveRange: 10,
   },
   {
+    side: 'Player',
     shipType: ShipType.Pirate,
     name: 'Whydah Galley',
     defaultPosition: {
@@ -38,6 +41,7 @@ const PLAYER_SHIPS = [
 
 const ENEMY_SHIPS = [
   {
+    side: 'Enemy',
     shipType: ShipType.Red,
     name: 'HMS Nemesis',
     defaultPosition: {
@@ -47,6 +51,7 @@ const ENEMY_SHIPS = [
     moveRange: 10,
   },
   {
+    side: 'Enemy',
     shipType: ShipType.Red,
     name: 'The Dragon',
     defaultPosition: {
@@ -56,6 +61,7 @@ const ENEMY_SHIPS = [
     moveRange: 10,
   },
   {
+    side: 'Enemy',
     shipType: ShipType.Red,
     name: 'HMS Salisbury',
     defaultPosition: {
@@ -98,7 +104,6 @@ export default class Game extends Phaser.Scene {
 
     // Create an action menu
     this.actionMenu = new ActionMenu(this)
-    this.actionMenu.positionMenu({ x: 0, y: 0 })
   }
 
   setupLevel() {

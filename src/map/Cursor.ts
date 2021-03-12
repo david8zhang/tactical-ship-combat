@@ -76,21 +76,25 @@ export class Cursor {
 
       // If there is already a selected ship
       if (this.selectedShip) {
+        // If the space to move to is the same as the starting space
+        if (this.currRow === this.selectedShip.currX && this.currCol == this.selectedShip.currY) {
+          this.gameScene.level.turnOffAllHighlights()
+          this.gameScene.actionMenu.enable(this.selectedShip)
+        }
+
+        // if the current space is moveable
         if (level.checkSpaceMoveable(this.currRow, this.currCol)) {
           const newPos = { x: this.currRow, y: this.currCol }
           level.moveShip(this.selectedShip, newPos, this.gameScene.level.playerShips, () => {
             this.gameScene.level.turnOffAllHighlights()
 
             // Enable the action menu
-            this.gameScene.actionMenu.enable({
-              x: this.selectedShip!.currX,
-              y: this.selectedShip!.currY,
-            })
+            this.gameScene.actionMenu.enable(this.selectedShip as Ship)
           })
         }
       } else {
         const ship = level.getShipAtPosition(this.currRow, this.currCol)
-        if (ship && !ship.hasMoved) {
+        if (ship && !ship.hasMoved && ship.side === 'Player') {
           this.selectedShip = ship
           this.gameScene.level.highlightMoveableSquares(ship)
         }

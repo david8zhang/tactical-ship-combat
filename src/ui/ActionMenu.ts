@@ -1,6 +1,7 @@
 import Game from '../scenes/Game'
 import { MapUtils } from '~/utils/MapUtils'
 import { Constants } from '../utils/Constants'
+import { Ship } from '~/level/Ship'
 
 export class ActionMenuItem {
   private textItem: Phaser.GameObjects.Text
@@ -70,10 +71,10 @@ export class ActionMenu {
       .setVisible(false)
   }
 
-  positionMenu(position: { x: number; y: number }) {
+  positionMenu(position: { x: number; y: number }, actionList: ActionMenuItem[]) {
     const { x, y } = position
     this.position = position
-    this.actionList.forEach((item: ActionMenuItem, index: number) => {
+    actionList.forEach((item: ActionMenuItem, index: number) => {
       item.setX(MapUtils.getPixelCoords(x) + Constants.ACTION_MENU_OFFSET_X)
       item.setY(MapUtils.tileToPixelValue(y) + index * Constants.ACTION_MENU_HEIGHT)
     })
@@ -91,12 +92,27 @@ export class ActionMenu {
     this.cursor?.setVisible(false)
   }
 
-  enable(position: { x: number; y: number }) {
+  getActionList(ship: Ship) {
+    const isAttackable = this.scene.level.checkShipInAttackRange(ship)
+    const actionList = [
+      new ActionMenuItem(this.scene, 'Wait'),
+      new ActionMenuItem(this.scene, 'Cancel'),
+    ]
+    if (isAttackable) {
+      actionList.splice(1, 0, new ActionMenuItem(this.scene, 'Attack'))
+    }
+    return actionList
+  }
+
+  enable(ship: Ship) {
+    const position = { x: ship.currX, y: ship.currY }
     this.isEnabled = true
-    this.positionMenu(position)
-    this.actionList.forEach((item: ActionMenuItem) => {
+    const actionList = this.getActionList(ship)
+    this.positionMenu(position, actionList)
+    actionList.forEach((item: ActionMenuItem) => {
       item.setVisible(true)
     })
+    this.actionList = actionList
     this.cursor?.setVisible(true)
   }
 

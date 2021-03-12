@@ -108,6 +108,16 @@ export class PathUtils {
     }
   }
 
+  static manhattanDistance(start: { x: number; y: number }, end: { x: number; y: number }) {
+    return Math.abs(start.x - end.x) + Math.abs(start.y - end.y)
+  }
+
+  static pythagoreanDistance(start: { x: number; y: number }, end: { x: number; y: number }) {
+    const xDiff = end.x - start.x
+    const yDiff = end.y - start.y
+    return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
+  }
+
   /**
    * Trace back to starting position
    * @param  {object} end destination

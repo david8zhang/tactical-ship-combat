@@ -67,11 +67,23 @@ export class Level {
   }
 
   getShipAtPosition(x: number, y: number): Ship | null {
-    return this.playerShips[y][x]
+    return this.playerShips[y][x] || this.enemyShips[y][x]
   }
 
   isShipAtPosition(x: number, y: number): boolean {
-    return this.playerShips[y][x] !== null
+    return this.playerShips[y][x] !== null || this.enemyShips[y][x] !== null
+  }
+
+  checkShipInAttackRange(ship: Ship) {
+    const squaresInRange = PathUtils.getSquaresInRange(ship.attackRange + 1, ship.currX, ship.currY)
+    for (let i = 0; i < squaresInRange.length; i++) {
+      const square = squaresInRange[i]
+      const attackableShip = this.getShipAtPosition(square[0], square[1])
+      if (attackableShip && attackableShip.side !== ship.side) {
+        return true
+      }
+    }
+    return false
   }
 
   moveShip(
@@ -96,8 +108,8 @@ export class Level {
     return this.isShipAtPosition(x, y) || Constants.GET_TILE_TYPE(this.mapObject[y][x]) != 'Ocean'
   }
 
-  highlightMoveableSquares(ship: Ship) {
-    const moveableSquares = PathUtils.getSquaresInRange(ship.moveRange, ship.currX, ship.currY)
+  getMoveableSquares(ship: Ship) {
+    return PathUtils.getSquaresInRange(ship.moveRange, ship.currX, ship.currY)
       .filter((square) => {
         const [x, y] = square
         return this.isTileInBounds(x, y)
@@ -106,6 +118,10 @@ export class Level {
         const [x, y] = square
         return !this.isObjectAtSpace(x, y)
       })
+  }
+
+  highlightMoveableSquares(ship: Ship) {
+    const moveableSquares = this.getMoveableSquares(ship)
     moveableSquares.forEach((square) => {
       this.highlightTile(square[0], square[1])
     })

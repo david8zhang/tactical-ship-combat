@@ -12,7 +12,15 @@ export enum ShipType {
   'Yellow' = 5,
 }
 
+export enum Angle {
+  RIGHT = 270,
+  LEFT = 90,
+  UP = 180,
+  DOWN = 0,
+}
+
 export interface ShipConfig {
+  side: string
   name: string
   shipType: ShipType
   defaultPosition: {
@@ -24,6 +32,8 @@ export interface ShipConfig {
 
 export class Ship {
   public name: string
+  public attackRange: number = 2
+  public side: string
   public currX: number
   public currY: number
   public moveRange: number
@@ -42,6 +52,7 @@ export class Ship {
     this.sprite.scale = Constants.SCALE_FACTOR
     this.setPosition(shipConfig.defaultPosition.x, shipConfig.defaultPosition.y)
     this.hasMoved = false
+    this.side = shipConfig.side
   }
 
   public setPosition(posX: number, posY: number) {
@@ -63,6 +74,7 @@ export class Ship {
 
   animatePath(path: any[] | undefined, index: number, cb: Function): void {
     if (!path) {
+      cb()
       return
     }
     if (index === path.length) {
@@ -72,12 +84,15 @@ export class Ship {
     const step = path[index]
     const xDiff = (step.x - this.currX) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
     const yDiff = (step.y - this.currY) * (Constants.TILE_SIZE * Constants.SCALE_FACTOR)
+    const angleOfRotation = this.getSpriteRotationAngle(xDiff, yDiff)
+
     this.gameScene.tweens.add({
       targets: this.sprite,
       duration: 75,
       x: `+=${xDiff}`,
       y: `+=${yDiff}`,
       onComplete: () => {
+        this.sprite.setAngle(angleOfRotation)
         this.sprite.setX(MapUtils.getPixelCoords(step.x))
         this.sprite.setY(MapUtils.getPixelCoords(step.y))
         this.currX = step.x
@@ -85,6 +100,19 @@ export class Ship {
         this.animatePath(path, index + 1, cb)
       },
     })
+  }
+
+  getSpriteRotationAngle(xDiff: number, yDiff: number) {
+    if (xDiff > 0 && yDiff === 0) {
+      return Angle.RIGHT
+    }
+    if (xDiff < 0 && yDiff === 0) {
+      return Angle.LEFT
+    }
+    if (xDiff === 0 && yDiff < 0) {
+      return Angle.UP
+    }
+    return Angle.DOWN
   }
 
   public move(x: number, y: number, cb: Function) {
