@@ -8,14 +8,14 @@ import { Position } from '~/ui/UnitPreview'
 export class Cursor {
   private gameScene!: Game
   private cursorImg!: Phaser.GameObjects.Image
-  private currRow: number
-  private currCol: number
+  private currX: number
+  private currY: number
   public selectedShip: Ship | null = null
 
   constructor(gameScene: Game, x: number, y: number) {
     this.gameScene = gameScene
-    this.currRow = x
-    this.currCol = y
+    this.currX = x
+    this.currY = y
     this.cursorImg = this.gameScene.add.image(0, 0, 'cursor')
     this.cursorImg.setDepth(gameScene.map.layers.length + 1)
     this.cursorImg.scale = Constants.SCALE_FACTOR
@@ -34,42 +34,20 @@ export class Cursor {
     const mapWidth = this.gameScene.map.widthInPixels * Constants.SCALE_FACTOR
     const mapHeight = this.gameScene.map.heightInPixels * Constants.SCALE_FACTOR
 
-    if (isLeft && this.currRow > 0) {
-      this.cursorImg.setX(MapUtils.getPixelCoords(this.currRow - 1))
-      if (MapUtils.tileToPixelValue(this.currRow) == this.gameScene.camera.worldView.left) {
-        this.gameScene.camera.scrollX(-1)
-      }
-      this.currRow -= 1
+    if (isLeft && this.currX > 0) {
+      this.moveCursorHoriz(-1)
     }
 
-    if (isRight && MapUtils.tileToPixelValue(this.currRow + 1) < mapWidth) {
-      this.cursorImg.setX(MapUtils.getPixelCoords(this.currRow + 1))
-      if (
-        MapUtils.tileToPixelValue(this.currRow) ==
-        this.gameScene.camera.worldView.right - MapUtils.tileToPixelValue(1)
-      ) {
-        this.gameScene.camera.scrollX(1)
-      }
-      this.currRow += 1
+    if (isRight && MapUtils.tileToPixelValue(this.currX + 1) < mapWidth) {
+      this.moveCursorHoriz(1)
     }
 
-    if (isDown && MapUtils.tileToPixelValue(this.currCol + 1) < mapHeight) {
-      this.cursorImg.setY(MapUtils.getPixelCoords(this.currCol + 1))
-      if (
-        MapUtils.tileToPixelValue(this.currCol) ==
-        this.gameScene.camera.worldView.bottom - MapUtils.tileToPixelValue(1)
-      ) {
-        this.gameScene.camera.scrollY(1)
-      }
-      this.currCol += 1
+    if (isDown && MapUtils.tileToPixelValue(this.currY + 1) < mapHeight) {
+      this.moveCursorVert(1)
     }
 
-    if (isUp && this.currCol > 0) {
-      this.cursorImg.setY(MapUtils.getPixelCoords(this.currCol - 1))
-      if (MapUtils.tileToPixelValue(this.currCol) == this.gameScene.camera.worldView.top) {
-        this.gameScene.camera.scrollY(-1)
-      }
-      this.currCol -= 1
+    if (isUp && this.currY > 0) {
+      this.moveCursorVert(-1)
     }
 
     // Press Space to select
@@ -79,14 +57,14 @@ export class Cursor {
       // If there is already a selected ship
       if (this.selectedShip) {
         // If the space to move to is the same as the starting space
-        if (this.currRow === this.selectedShip.currX && this.currCol == this.selectedShip.currY) {
+        if (this.currX === this.selectedShip.currX && this.currY == this.selectedShip.currY) {
           this.gameScene.level.turnOffAllHighlights()
           this.gameScene.actionMenu.enable(this.selectedShip)
         }
 
         // if the current space is moveable
-        if (level.checkSpaceMoveable(this.currRow, this.currCol)) {
-          const newPos = { x: this.currRow, y: this.currCol }
+        if (level.checkSpaceMoveable(this.currX, this.currY)) {
+          const newPos = { x: this.currX, y: this.currY }
           level.moveShip(this.selectedShip, newPos, this.gameScene.level.playerShips, () => {
             this.gameScene.level.turnOffAllHighlights()
 
@@ -95,7 +73,7 @@ export class Cursor {
           })
         }
       } else {
-        const ship = level.getShipAtPosition(this.currRow, this.currCol)
+        const ship = level.getShipAtPosition(this.currX, this.currY)
         if (ship && !ship.hasMoved && ship.side === 'Player') {
           this.selectedShip = ship
           this.gameScene.level.highlightMoveableSquares(ship)
@@ -107,20 +85,81 @@ export class Cursor {
     if (shipUnderCursor) {
       this.showShipUnitPreviewMenu()
     } else {
-      UIScene.getInstance().unitPreview.setVisible(false)
+      UIScene.getInstance().unitPreview.disable()
     }
   }
 
-  showShipUnitPreviewMenu() {
-    UIScene.getInstance().unitPreview.setVisible(true)
-    UIScene.getInstance().unitPreview.setPosition(Position.BOTTOM_LEFT)
+  // 1 = Right, -1 = Left
+  moveCursorHoriz(direction: number) {
+    const { camera } = this.gameScene
+    const bound = direction === 1 ? camera.worldView.right : camera.worldView.left
+    const offset = bound === camera.worldView.right ? MapUtils.tileToPixelValue(1) : 0
+    this.cursorImg.setX(MapUtils.getPixelCoords(this.currX + direction))
+    if (MapUtils.tileToPixelValue(this.currX) === bound - offset) {
+      camera.scrollX(direction)
+    }
+    this.currX += direction
+    this.getMenuPosBasedOnCamera()
   }
 
-  getCursorQuadrant() {}
+  // -1 = Up, 1 = Down
+  moveCursorVert(direction: number) {
+    const { camera } = this.gameScene
+    const bound = direction === 1 ? camera.worldView.bottom : camera.worldView.top
+    const offset = bound === camera.worldView.bottom ? MapUtils.tileToPixelValue(1) : 0
+    this.cursorImg.setY(MapUtils.getPixelCoords(this.currY + direction))
+    if (MapUtils.tileToPixelValue(this.currY) === bound - offset) {
+      camera.scrollY(direction)
+    }
+    this.currY += direction
+    this.getMenuPosBasedOnCamera()
+  }
+
+  showShipUnitPreviewMenu() {
+    const position = this.getMenuPosBasedOnCamera()
+    UIScene.getInstance().unitPreview.enable(position)
+  }
+
+  // If the item being hovered over is in the bottom left, spawn the menu on the bottom right and vice versa
+  getMenuPosBasedOnCamera() {
+    const { camera } = this.gameScene
+    const { unitPreview } = UIScene.getInstance()
+
+    const offsetX = MapUtils.tileToPixelValue(camera.getOffsetX())
+    const offsetY = MapUtils.tileToPixelValue(camera.getOffsetY())
+
+    const { panelHeight, panelWidth } = unitPreview
+    const paddedPanelHeight = panelHeight + MapUtils.tileToPixelValue(1)
+    const paddedPanelWidth = panelWidth + MapUtils.tileToPixelValue(1)
+
+    // Left Menu bounds
+    const leftMenuBounds = [
+      [offsetX, Constants.GAME_WINDOW_HEIGHT + offsetY - paddedPanelHeight], // top left corner
+      [offsetX + paddedPanelWidth, Constants.GAME_WINDOW_HEIGHT + offsetY - paddedPanelHeight], // top right corner
+      [offsetX, Constants.GAME_WINDOW_HEIGHT + offsetY], // Bottom Left corner
+      [offsetX + paddedPanelWidth, Constants.GAME_WINDOW_HEIGHT + offsetY], // Bottom right corner
+    ]
+    if (this.isCursorInRectBounds(leftMenuBounds)) {
+      return Position.BOTTOM_RIGHT
+    }
+    return Position.BOTTOM_LEFT
+  }
+
+  isCursorInRectBounds(rect: number[][]) {
+    const topLeft = rect[0]
+    const topRight = rect[1]
+    const bottomLeft = rect[2]
+    return (
+      MapUtils.tileToPixelValue(this.currX) >= topLeft[0] &&
+      MapUtils.tileToPixelValue(this.currX) <= topRight[0] &&
+      MapUtils.tileToPixelValue(this.currY) >= topLeft[1] &&
+      MapUtils.tileToPixelValue(this.currY) <= bottomLeft[1]
+    )
+  }
 
   getShipUnderCursor(): Ship | null {
     const { level } = this.gameScene
-    return level.getShipAtPosition(this.currRow, this.currCol)
+    return level.getShipAtPosition(this.currX, this.currY)
   }
 
   choosePostMoveAction(option) {
@@ -154,12 +193,12 @@ export class Cursor {
     if (this.isPosInBounds(row, col)) {
       this.cursorImg.setX(MapUtils.getPixelCoords(row))
       this.cursorImg.setY(MapUtils.getPixelCoords(col))
-      this.currRow = row
-      this.currCol = col
+      this.currX = row
+      this.currY = col
     }
   }
 
   getCursorPos(): number[] {
-    return [this.currRow, this.currCol]
+    return [this.currX, this.currY]
   }
 }

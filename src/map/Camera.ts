@@ -32,7 +32,7 @@ export class Camera {
    * @return {int}
    */
   getOffsetX() {
-    return this.camera.scrollX / Constants.TILE_SIZE
+    return this.camera.scrollX / Constants.SCALED_TILE_SIZE
   }
 
   /**
@@ -40,6 +40,6 @@ export class Camera {
    * @return {int}
    */
   getOffsetY() {
-    return this.camera.scrollY / Constants.TILE_SIZE
+    return this.camera.scrollY / Constants.SCALED_TILE_SIZE
   }
 }

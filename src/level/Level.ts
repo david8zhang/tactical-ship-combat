@@ -78,9 +78,11 @@ export class Level {
     const squaresInRange = PathUtils.getSquaresInRange(ship.attackRange + 1, ship.currX, ship.currY)
     for (let i = 0; i < squaresInRange.length; i++) {
       const square = squaresInRange[i]
-      const attackableShip = this.getShipAtPosition(square[0], square[1])
-      if (attackableShip && attackableShip.side !== ship.side) {
-        return true
+      if (this.isTileInBounds(square[0], square[1])) {
+        const attackableShip = this.getShipAtPosition(square[0], square[1])
+        if (attackableShip && attackableShip.side !== ship.side) {
+          return true
+        }
       }
     }
     return false
@@ -96,8 +98,10 @@ export class Level {
     const oldX = ship.currX
     const oldY = ship.currY
     shipPositions[oldY][oldX] = null
-    ship.move(x, y, cb)
-    shipPositions[y][x] = ship
+    ship.move(x, y, () => {
+      shipPositions[y][x] = ship
+      cb()
+    })
   }
 
   checkSpaceMoveable(x: number, y: number) {
