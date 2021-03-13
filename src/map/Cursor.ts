@@ -1,7 +1,9 @@
 import Game from '../scenes/Game'
+import UIScene from '../scenes/UIScene'
 import { Constants } from '../utils/Constants'
 import { MapUtils } from '../utils/MapUtils'
 import { Ship } from '../level/Ship'
+import { Position } from '~/ui/UnitPreview'
 
 export class Cursor {
   private gameScene!: Game
@@ -100,6 +102,25 @@ export class Cursor {
         }
       }
     }
+
+    const shipUnderCursor = this.getShipUnderCursor()
+    if (shipUnderCursor) {
+      this.showShipUnitPreviewMenu()
+    } else {
+      UIScene.getInstance().unitPreview.setVisible(false)
+    }
+  }
+
+  showShipUnitPreviewMenu() {
+    UIScene.getInstance().unitPreview.setVisible(true)
+    UIScene.getInstance().unitPreview.setPosition(Position.BOTTOM_LEFT)
+  }
+
+  getCursorQuadrant() {}
+
+  getShipUnderCursor(): Ship | null {
+    const { level } = this.gameScene
+    return level.getShipAtPosition(this.currRow, this.currCol)
   }
 
   choosePostMoveAction(option) {

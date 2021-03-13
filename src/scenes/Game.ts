@@ -4,6 +4,7 @@ import { Level } from '../level/level'
 import { Ship, ShipConfig, ShipType } from '../level/Ship'
 import { Camera } from '../map/Camera'
 import { ActionMenu } from '../ui/ActionMenu'
+import { UnitPreview } from '../ui/UnitPreview'
 import { AI } from '../level/AI'
 
 const PLAYER_SHIPS = [
@@ -79,6 +80,7 @@ export default class Game extends Phaser.Scene {
   public map!: Phaser.Tilemaps.Tilemap
   public camera!: Camera
   public actionMenu!: ActionMenu
+  public unitPreview!: UnitPreview
   public ai!: AI
 
   constructor() {
